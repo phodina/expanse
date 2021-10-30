@@ -1,0 +1,31 @@
+* Expanse Guix channel
+** Warning
+
+This channel does not endorse any non-free application. We believe it is non-ethical, harmful to software development and restricts the users freedom. See the GNU philosophy for a more thorough discussion.
+
+Those packages are provided as a last resort, should none of the official Guix packages work for you. You should understand the implication of using non-free software. Some of those implications include:
+
+    Endorsement of non-free products and the perpetration of a culture of restriction on liberties.
+    Non-free software cannot (or hardly) be audited: it can potentially spy on you, destroy or steal your data.
+
+As a minimal security measure, it’s heavily recommended to run any non-free software inside a container.
+
+** Installation
+
+  Nonguix can be installed as a [[https://guix.gnu.org/manual/en/html_node/Channels.html][Guix channel]]. To do so, add it to ~~/.config/guix/channels.scm~:
+#+NAME channel-configuration
+#+BEGIN_SRC scheme 
+(channel
+  (name 'expanse)
+  (url "https://github.com/phodina/expanse")
+  (introduction
+    (make-channel-introduction
+      "71b93677a2312b2d0af2bfc1cc75eba43fa89ea2"
+        (openpgp-fingerprint
+          "418E BDDC 2C3B 1F72 6844  B7C6 7EBE C331 8DB7 196D"))))
+
+#+END_SRC
+
+** Contributing
+
+Contributions are welcome! Though the main purpose of this channel is to define, test and run packages. Later they can be upstreamed either to Guix or NonGuix repositories.
