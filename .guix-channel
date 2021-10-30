@@ -1,1 +1,6 @@
-(channel (version 0))
+(channel 
+  (version 0)
+  (dependencies
+   (channel
+    (name nonguix)
+    (url "https://gitlab.com/nonguix/nonguix.git"))))
