@@ -8,6 +8,7 @@
   #:use-module (gnu packages compression)
   #:use-module (gnu packages nettle)
   #:use-module (gnu packages qt)
+  #:use-module (gnu packages check)
   #:use-module (gnu packages cpp)
   #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages gettext)
@@ -94,20 +95,28 @@ version 3.1 and 3.1.1")
     (description "")
     (license (list license:bsd-3 license:gpl2+ license:gpl3))))
 
+; Port patch to 0.10.0
 (define-public s2geometry
   (package
     (name "s2geometry")
-    (version "0.10.0")
+    (version "0.9.0")
     (source
      (origin
        (method git-fetch)
        (uri (git-reference
 	   (url "https://github.com/google/s2geometry") 
 	   (commit (string-append "v" version))))
+	   (patches '("patches/s2geometry-Use-uint64_t.patch"))
        (sha256
         (base32
-         "1y6rs3qv0nk32b8r8nvninkjqab96g3cw1gmfjy975r0d7icap8m"))))
+         "1mx61bnn2f6bd281qlhn667q6yfg1pxzd2js88l5wpkqlfzzhfaz"))))
     (build-system cmake-build-system)
+	(arguments
+	(list 
+#:tests? #f
+    ;#:configure-flags #~(list (string-append "-DGTEST_ROOT=" #$googletest))
+	#:test-target "test"))
+	(native-inputs (list googletest))
 	(inputs (list openssl abseil-cpp))
     (home-page
 	"http://s2geometry.io/")
@@ -132,8 +141,15 @@ version 3.1 and 3.1.1")
          "1mjgb5wjprapaxsddlrshbafzjp408kzsfxc3b9af1y2jfrkx0da"))))
     (build-system cmake-build-system)
 	(arguments
-	 (list #:phases
+(list #:tests? #f
+	 #:phases
      #~(modify-phases %standard-phases
+	    (add-after 'install 'fix-modules
+		(lambda* _
+		(substitute* (string-append #$output
+		"/share/pure-maps/qml/pure-maps.qml")
+		(("QtMultimedia 5.6") "QtMultimedia 15.5")
+		(("QtPositioning 5.4") "QtPositioning 15.5"))))
 	    (add-after 'unpack 'third-party
 		(lambda* _
 		 (copy-recursively #$(origin
@@ -164,7 +180,10 @@ version 3.1 and 3.1.1")
          "1nx6qpvlbmv69mzg1m661bkmz56xmmzggav90s0rhmq6r6k3n465")))
 		 "thirdparty/flexible-polyline"))))))
 	(native-inputs (list gettext-minimal qttools-5))
-	(inputs (list s2geometry python qtbase-5 qtlocation qtdeclarative-5 qtquickcontrols2-5))
+	(inputs (list s2geometry python qtbase-5 qtlocation kirigami
+	qtsensors qtdeclarative-5 python-geomag python-gpxpy
+	mapbox-gl-qml
+	qtquickcontrols2-5 qtmultimedia-5))
     (synopsis
      "Maps and navigation")
     (description "")
